@@ -15,6 +15,10 @@ public:
     }
   }
 
+  ~Graph() {
+
+  }
+
   void ReadFromStream(std::istream& stream) {
     for(uint32_t i=0; i<count_vertex_; i++) {
       for (uint32_t j=0; j<count_vertex_; j++) {
@@ -54,8 +58,8 @@ private:
     }
   }
 
-  std::vector<std::vector<int>> adjacency_matrix_ { };
-  uint32_t count_vertex_ { };
+  std::vector<std::vector<int>> adjacency_matrix_;
+  uint32_t count_vertex_;
 };
 
 int main() {
