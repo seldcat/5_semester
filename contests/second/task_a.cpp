@@ -18,16 +18,16 @@ class Graph {
   int GetConnectedComponent(const uint32_t vertex) const {
     std::vector<bool> visited(count_vertex_, false);
 
-    DepthFirstSearch(vertex - 1, visited);
+    DepthFirstSearch(vertex, visited);
 
-    return std::accumulate(visited.begin(), visited.end(), true);
+    return std::accumulate(visited.begin(), visited.end(), 0);
   }
 
  private:
   void DepthFirstSearch(const uint32_t vertex, std::vector<bool> &visited) const {
     visited[vertex] = true;
     for (uint32_t i = 0; i < count_vertex_; i++) {
-      if (visited[i] != true and adjacency_matrix_[vertex][i] == 1) {
+      if (!visited[i] and adjacency_matrix_[vertex][i] == 1) {
         DepthFirstSearch(i, visited);
       }
     }
@@ -42,6 +42,6 @@ int main() {
     std::cin >> n >> s;
     Graph graph(n);
     graph.ReadFromStream(std::cin);
-    std::cout << graph.GetConnectedComponent(s);
+    std::cout << graph.GetConnectedComponent(s-1);
     return 0;
 }
