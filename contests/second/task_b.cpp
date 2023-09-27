@@ -30,6 +30,11 @@ class Graph {
   }
 
   std::vector<uint32_t> BreadthFirstSearch(const std::vector<uint32_t>& start_vertices) const {
+    bool is_there_only_visited_vertex = std::find(start_vertices.begin(), start_vertices.end(), UINT32_MAX) == std::end(start_vertices);
+    if (is_there_only_visited_vertex) {    // когда непосещенных вершин нет, мы закончили bfs
+      return start_vertices;
+    }
+
     bool are_there_any_exits = std::find(start_vertices.begin(), start_vertices.end(), 0) != std::end(start_vertices);
     std::vector<uint32_t> next_vertices = start_vertices;
     if (not are_there_any_exits) {    // если нет 0, то выходов нет, значит отмечаем их - это начало bfs
