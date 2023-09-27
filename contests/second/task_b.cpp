@@ -30,11 +30,6 @@ class Graph {
   }
 
   std::vector<uint32_t> BreadthFirstSearch(const std::vector<uint32_t>& start_vertices) const {
-    bool is_there_only_visited_vertex = std::find(start_vertices.begin(), start_vertices.end(), UINT32_MAX) == std::end(start_vertices);
-    if (is_there_only_visited_vertex) {    // когда непосещенных вершин нет, мы закончили bfs
-      return start_vertices;
-    }
-
     bool are_there_any_exits = std::find(start_vertices.begin(), start_vertices.end(), 0) != std::end(start_vertices);
     std::vector<uint32_t> next_vertices = start_vertices;
     if (not are_there_any_exits) {    // если нет 0, то выходов нет, значит отмечаем их - это начало bfs
@@ -59,22 +54,6 @@ class Graph {
       }
     }
     return BreadthFirstSearch(next_vertices);
-  }
-
-  void OutputData() {
-    std::cout << "Exits: ";
-    for (uint32_t i = 0; i < count_exits_; i++)
-      std::cout << vector_exits_[i] << " ";
-    std::cout << '\n';
-    std::cout << "count_vertex_ = " << count_vertex_ << '\n';
-    std::cout << "count_edges_ = " << count_edges_ << '\n';
-    std::cout << "adjacency_vectors_: \n";
-    for (uint32_t i = 0; i < count_vertex_; i++) {
-      for (uint32_t j = 0; j < adjacency_vectors_[i].size(); j++) {
-        std::cout << adjacency_vectors_[i][j] + 1 << ' ';
-      }
-      std::cout << '\n';
-    }
   }
    
  private:
