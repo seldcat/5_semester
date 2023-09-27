@@ -2,11 +2,11 @@
 #include <iostream>
 #include <vector>
 #include <numeric>
-#include <list>
+#include <algorithm>
 
 class Graph {
  public:
-  explicit Graph(uint32_t n, uint32_t k) : adjacency_vectors_(n, std::vector<uint32_t>()), count_vertex_(n), count_exits_(k), vector_exits_() {}
+  explicit Graph(uint32_t n, uint32_t k) : adjacency_vectors_(n, std::vector<uint32_t>()), count_vertex_(n), count_edges_(0), count_exits_(k), vector_exits_() {}
    
   void PutCountEdges(uint32_t n) {
     count_edges_ = n;
@@ -14,7 +14,7 @@ class Graph {
 
   void ReadExits(std::istream& stream) {
     uint32_t vertex;
-    for (int i = 0; i < count_exits_; i++) {
+    for (uint32_t i = 0; i < count_exits_; i++) {
       stream >> vertex;
       vector_exits_.push_back(vertex - 1);
     }
@@ -22,7 +22,7 @@ class Graph {
 
   void ReadFromStream(std::istream& stream) {
     int left_vertex, right_vertex;
-    for (int i = 0; i < count_edges_; i++) {
+    for (uint32_t i = 0; i < count_edges_; i++) {
       stream >> left_vertex >> right_vertex;
       adjacency_vectors_[left_vertex - 1].push_back(right_vertex - 1);
       adjacency_vectors_[right_vertex - 1].push_back(left_vertex - 1);
@@ -30,45 +30,31 @@ class Graph {
   }
 
   std::vector<uint32_t> BreadthFirstSearch(const std::vector<uint32_t>& start_vertices) const {
-    for (int i = 0; i < start_vertices.size(); i++) {
-      std::cout << start_vertices[i] << ' ';
-    }
-    std::cout << '\n';
-
-    bool is_there_only_visited_vertex = true;
-    uint32_t maximum = -1;     // максимальное значение в векторе - это максимальное расстояние от выходов
-    for (int i = 0; i < start_vertices.size(); i++) {
-      if (start_vertices[i] == -1) {
-        is_there_only_visited_vertex = false;
-      }
-      if (maximum < start_vertices[i]) {
-        maximum = start_vertices[i];
-      }
-    }
-
-    if (is_there_only_visited_vertex) {    // когда непосещенных вершин нет, мы закончили
+    bool is_there_only_visited_vertex = std::find(start_vertices.begin(), start_vertices.end(), UINT32_MAX) == std::end(start_vertices);
+    if (is_there_only_visited_vertex) {    // когда непосещенных вершин нет, мы закончили bfs
       return start_vertices;
     }
 
-    std::vector<uint32_t> next_vertices(count_vertex_, -1);
-    if (maximum == -1) {       // если максимум равен -1, то обозначаем где у нас выходы - помечаем их 0
-      for (int i = 0; i < vector_exits_.size(); i++) {
-        next_vertices[vector_exits_[i]] = 0;
+    bool are_there_any_exits = std::find(start_vertices.begin(), start_vertices.end(), 0) != std::end(start_vertices);
+    std::vector<uint32_t> next_vertices = start_vertices;
+    if (not are_there_any_exits) {    // если нет 0, то выходов нет, значит отмечаем их - это начало bfs
+      for (uint32_t vertex : vector_exits_) {
+        next_vertices[vertex] = 0;
       }
-      return BreadthFirstSearch(next_vertices);
     }
 
-    for (int i = 0; i < start_vertices.size(); i++) {  // иначе идем от максимальных значений по ребрам
-      if (start_vertices[i] == maximum) {
-        next_vertices[i] = maximum;
-        for (int j = 0; j < adjacency_vectors_[i].size(); j++) {
-          if (start_vertices[adjacency_vectors_[i][j]] == -1) {    // если до этого вершину не проходили, то значит заполняем её
-            next_vertices[adjacency_vectors_[i][j]] = maximum + 1;
+    uint32_t max_distance = 0;   // максимальное расстояние, за исключением UINT32_MAX
+    for (uint32_t distance : start_vertices) {
+      if (distance != UINT32_MAX && distance > max_distance) {
+        max_distance = distance;
+      }
+    }
+    for (uint32_t i = 0; i < start_vertices.size(); i++) {  // теперь идем по ребрам от вершин, у которых макс расстояние
+      if (start_vertices[i] == max_distance) {
+        for (uint32_t vertex : adjacency_vectors_[i]) {
+          if (start_vertices[vertex] == UINT32_MAX) {    // если до этого вершину не проходили, то значит заполняем её
+            next_vertices[vertex] = max_distance + 1;
           }
-        }
-      } else {
-        if (start_vertices[i] != -1) {
-          next_vertices[i] = start_vertices[i];
         }
       }
     }
@@ -77,14 +63,14 @@ class Graph {
 
   void OutputData() {
     std::cout << "Exits: ";
-    for (int i = 0; i < count_exits_; i++)
+    for (uint32_t i = 0; i < count_exits_; i++)
       std::cout << vector_exits_[i] << " ";
     std::cout << '\n';
     std::cout << "count_vertex_ = " << count_vertex_ << '\n';
     std::cout << "count_edges_ = " << count_edges_ << '\n';
     std::cout << "adjacency_vectors_: \n";
-    for (int i = 0; i < count_vertex_; i++) {
-      for (int j = 0; j < adjacency_vectors_[i].size(); j++) {
+    for (uint32_t i = 0; i < count_vertex_; i++) {
+      for (uint32_t j = 0; j < adjacency_vectors_[i].size(); j++) {
         std::cout << adjacency_vectors_[i][j] + 1 << ' ';
       }
       std::cout << '\n';
@@ -92,11 +78,11 @@ class Graph {
   }
    
  private:
-   std::vector<std::vector<uint32_t>> adjacency_vectors_;
-   uint32_t count_vertex_;
-   uint32_t count_edges_;
-   uint32_t count_exits_;
-   std::vector<uint32_t> vector_exits_;
+  std::vector<std::vector<uint32_t>> adjacency_vectors_;
+  uint32_t count_vertex_;
+  uint32_t count_edges_;
+  uint32_t count_exits_;
+  std::vector<uint32_t> vector_exits_;
 };
 
 int main() {
@@ -110,11 +96,12 @@ int main() {
   graph.ReadFromStream(std::cin);
 
 
-  std::vector<uint32_t> start_vertices(n, -1);
+  std::vector<uint32_t> start_vertices(n, UINT32_MAX);
   std::vector<uint32_t> result = graph.BreadthFirstSearch(start_vertices);
-  for (int i = 0; i < result.size(); i++) {
-    std::cout << result[i] << ' ';
+  for (uint32_t distance : result) {
+    std::cout << distance << ' ';
   }
+  std::cout << '\n';
 
   return 0;
 }
