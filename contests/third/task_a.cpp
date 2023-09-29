@@ -1,11 +1,11 @@
 // Google style code
 #include <iostream>
 #include <vector>
-#include <limits>
+#include <algorithm>
 
 class Graph {
  public:
-  explicit Graph(uint32_t n) : adjacency_matrix_(n, std::vector<uint32_t>(n, 0)), vertex_count_(n){}
+  explicit Graph(uint32_t n) : adjacency_matrix_(n, std::vector<int>(n, 0)), vertex_count_(n){}
 
   void ReadFromStream(std::istream& stream) {
     for (uint32_t i = 0; i < vertex_count_; i++) {
@@ -15,8 +15,8 @@ class Graph {
     }
   }
 
-  const std::vector<std::vector<uint32_t>> FloydAlgorithm() const {
-    std::vector<std::vector<uint32_t>> shortest_distances = adjacency_matrix_;
+  const std::vector<std::vector<int>> FloydAlgorithm() const {
+    std::vector<std::vector<int>> shortest_distances = adjacency_matrix_;
     
     for (uint32_t i = 0; i < vertex_count_; i++) {
       for (uint32_t vertex_u = 0; vertex_u < vertex_count_; vertex_u++) {
@@ -32,7 +32,7 @@ class Graph {
   }
 
  private:
-  std::vector<std::vector<uint32_t>> adjacency_matrix_;
+  std::vector<std::vector<int>> adjacency_matrix_;
   uint32_t vertex_count_;
 };
 
@@ -41,7 +41,7 @@ int main() {
   std::cin >> n;
   Graph graph(n);
   graph.ReadFromStream(std::cin);
-  std::vector<std::vector<uint32_t>> shortest_distances = graph.FloydAlgorithm();
+  const std::vector<std::vector<int>> shortest_distances = graph.FloydAlgorithm();
   for (uint32_t i = 0; i < n; i++) {
     for (uint32_t j = 0; j < n; j++) {
       std::cout << shortest_distances[i][j] << ' ';
