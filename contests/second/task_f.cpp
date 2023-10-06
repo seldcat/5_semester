@@ -45,9 +45,13 @@ class Graph {
         return result_way;
       }
     }
-    // если не нашли нечетную вершину, то вышли из for цикла и начинаем построение из первой вершины
-    GetEulerPath(0, result_way, matrix_copy);
-    return result_way;
+    // если не нашли нечетную вершину, то вышли из for цикла и начинаем построение из первой вершины c ненулевой степенью
+    for (uint32_t i = 0; i < vertex_count_; i++) {
+      if (deg_[i] != 0) {
+        GetEulerPath(i, result_way, matrix_copy);
+        return result_way;
+      }
+    }
   }
   
  private:
