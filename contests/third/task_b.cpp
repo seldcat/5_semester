@@ -31,6 +31,7 @@ class Graph {
       uint32_t u, v, distance;
       stream >> u >> v >> distance;
       adjacency_matrix_[u - 1][v - 1] = distance;
+      adjacency_matrix_[v - 1][u - 1] = distance;
     }
 
     // номера городов А и Б
@@ -81,6 +82,9 @@ class Graph {
 };
 
 int main() {
+  std::ios_base::sync_with_stdio(0);
+  std::cin.tie(0);
+  std::cout.tie(0);
   uint32_t n;
   std::cin >> n;
   Graph graph(n);
