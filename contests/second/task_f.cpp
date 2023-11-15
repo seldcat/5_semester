@@ -49,9 +49,10 @@ class Graph {
     for (uint32_t i = 0; i < vertex_count_; i++) {
       if (deg_[i] != 0) {
         GetEulerPath(i, result_way, matrix_copy);
-        return result_way;
+        break;
       }
     }
+    return result_way;
   }
   
  private:
@@ -70,7 +71,7 @@ class Graph {
   
   void GetEulerPath(int vertex, std::vector<uint32_t>& result_way, std::vector<std::vector<int>> adjacency_matrix) const {
     for (uint32_t i = 0; i < vertex_count_; i++) {
-      if (adjacency_matrix[vertex][i]) {
+      if (adjacency_matrix[vertex][i] == 1) {
         adjacency_matrix[vertex][i] = 0;
         GetEulerPath(i, result_way, adjacency_matrix);
       }
