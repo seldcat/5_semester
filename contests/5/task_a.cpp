@@ -4,12 +4,9 @@
 
 class SegmentTree {
  public:
-   SegmentTree(uint32_t n): array_(n), size_(n), tree_(4 * n, std::numeric_limits<uint32_t>::max()) {
-    Build(1, 0, size_ - 1);
-  }
-
-  int FindMaxIndex(int left, int right) const {
-    return Query(1, 0, size_ - 1, left - 1, right - 1) + 1;
+  SegmentTree(uint32_t n): array_(n), size_(n), tree_(4 * n, std::numeric_limits<uint32_t>::max()) {
+     ReadFromStream(std::cin);
+     Build(1, 0, size_ - 1);
   }
   
   void ReadFromStream(std::istream& stream) {
@@ -17,11 +14,15 @@ class SegmentTree {
       stream >> array_[i];
     }
   }
-  
+
   void WriteToStream(std::ostream& stream) const {
     for (uint32_t i = 0; i < 4 * size_; i++) {
       stream << tree_[i] << " ";
     }
+  }
+
+  uint32_t FindMaxIndex(uint32_t left, uint32_t right) const {
+    return Query(1, 0, size_ - 1, left - 1, right - 1) + 1;
   }
   
  private:
@@ -69,7 +70,6 @@ int main() {
   std::cin >> N;
 
   SegmentTree segment_tree(N);
-  segment_tree.ReadFromStream(std::cin);
   
   //segment_tree.WriteToStream(std::cout);
 
